@@ -69,14 +69,20 @@ const uint8_t levelInfo []{
   124,
 };
 
-const uint8_t pipeInfo [6][2] {
-  //{13,0},
-  {13,101},
-  {23,111},
-  {31,121},
-  {42,121},
-  {148,101},
-  {165,101},
+struct Pipe
+{
+  uint8_t x;
+  uint8_t y;
+  uint8_t height;
+};
+
+const Pipe pipeInfo [6] {
+  { 13, 10, 1 },
+  { 23, 11, 1 },
+  { 31, 12, 1 },
+  { 42, 12, 1 },
+  { 148, 10, 1 },
+  { 165, 10, 1 },
 };
 
 
@@ -401,27 +407,25 @@ void buildBlock(uint8_t xSpot, uint8_t ySpot, uint8_t blockType){
 }
 */
 
-void buildPipe(uint8_t xSpot, uint8_t pipeHeightySpot){  
-  uint8_t tempHeight = pipeHeightySpot/10%10;
-  uint8_t tempySpot = (pipeHeightySpot%10);
-  if(mapx == xSpot - 1){
+void buildPipe(const Pipe & pipe) {
+  if(mapx == pipe.x - 1){
     //builds a pipe, input x position and height of pipe
-    for(uint8_t i = 0; i < tempHeight + 2; i++){
-      world[7 - i - tempySpot][16] = 7;
+    for(uint8_t i = 0; i < pipe.height + 2; i++){
+      world[7 - i - pipe.y][16] = 7;
     }
-    world[7 - tempHeight-1 - tempySpot][16] = 9;
+    world[7 - pipe.height-1 - pipe.y][16] = 9;
   }
   
-  else if(mapx == xSpot){
-    for(int i = 0; i < tempHeight + 2; i++){
-        world[7 - i - tempySpot][16] = 8; 
-        world[7 - tempHeight-1 - tempySpot][16] = 10;
+  else if(mapx == pipe.x){
+    for(int i = 0; i < pipe.height + 2; i++){
+        world[7 - i - pipe.y][16] = 8; 
+        world[7 - pipe.height-1 - pipe.y][16] = 10;
     }
   }
-  else if(mapx==xSpot + 1){
-    for(int i = 0; i < tempHeight + 1; i++){
-        world[7 - i - tempySpot][16] = levelInfo[level]/10%10;
-        world[7 - tempHeight-1 - tempySpot][16] = levelInfo[level]/10%10;
+  else if(mapx==pipe.x + 1){
+    for(int i = 0; i < pipe.height + 1; i++){
+        world[7 - i - pipe.y][16] = levelInfo[level]/10%10;
+        world[7 - pipe.height-1 - pipe.y][16] = levelInfo[level]/10%10;
     }
   }
 }
@@ -437,7 +441,7 @@ void piper(){
     }
   //pipes
     for(uint8_t y = 0; y<=5;y++){
-      buildPipe(pipeInfo[y][0],pipeInfo[y][1]);
+      buildPipe(pipeInfo[y]);
     }
   
  
